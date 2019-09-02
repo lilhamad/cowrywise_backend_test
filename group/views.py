@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from rest_framework import viewsets, filters
-from .models import Group
+from .models import Group, Payment
 from django.contrib.auth.models import User
-from .serializer import GroupSerializer, UserSerializer
+from django.contrib.auth import get_user_model
+from .serializer import GroupSerializer, UserSerializer, PaymentSerializer
 from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
@@ -14,8 +15,9 @@ from rest_framework.status import (
     HTTP_200_OK
 )
 from rest_framework.response import Response
+from rest_framework import permissions
 
-
+UserModel = get_user_model()
 @csrf_exempt
 @api_view(["POST"])
 @permission_classes((AllowAny,))
@@ -42,6 +44,7 @@ def sample_api(request):
 
 
 class GroupView(viewsets.ModelViewSet):
+    http_method_names = ['post']
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
@@ -51,8 +54,15 @@ class GroupSearchView(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
+    permission_classes = [permissions.DjangoModelPermissions]
 
 
+@permission_classes((AllowAny,))
 class UserView(viewsets.ModelViewSet):
+    http_method_names = ['post']
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+class PaymentView(viewsets.ModelViewSet):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
