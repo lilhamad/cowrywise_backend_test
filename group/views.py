@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from rest_framework import viewsets, filters
 from .models import Group
-from  django.contrib.auth.models import User
+from django.contrib.auth.models import User
 from .serializer import GroupSerializer, UserSerializer
+from django.contrib.auth import authenticate
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
@@ -32,15 +33,25 @@ def login(request):
     return Response({'token': token.key},
                     status=HTTP_200_OK)
 
+
+@csrf_exempt
+@api_view(["GET"])
+def sample_api(request):
+    data = {'sample_data': 123}
+    return Response(data, status=HTTP_200_OK)
+
+
 class GroupView(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
+
 class GroupSearchView(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
-    queryset =  Group.objects.all()
+    queryset = Group.objects.all()
     filter_backends = [filters.SearchFilter]
     search_fields = ['name']
+
 
 class UserView(viewsets.ModelViewSet):
     queryset = User.objects.all()

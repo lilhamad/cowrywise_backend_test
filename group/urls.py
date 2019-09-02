@@ -6,9 +6,10 @@ router = routers.DefaultRouter()
 router.register('groups', views.GroupView)
 router.register('users', views.UserView)
 router.register('group_search', views.GroupSearchView)
-router.register('login', views.login)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('api/login/', views.login),
+    path('api/sampleapi/', views.sample_api),
     path('api-auth/', include('rest_framework.urls'))
 ]
